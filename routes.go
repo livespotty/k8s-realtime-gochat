@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html"
 	"io"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -44,11 +45,14 @@ func roomGET(c *gin.Context) {
 		"nick":      nick,
 		"timestamp": time.Now().Unix(),
 	})
+	if len(nick) > 2 {
+		log.Printf("%s joined the room", nick)
+	}
 
 }
 
 func healthGET(c *gin.Context) {
-	
+
 	c.JSON(200, gin.H{
 		"message": "ok",
 	})
@@ -56,7 +60,7 @@ func healthGET(c *gin.Context) {
 }
 
 func readinessGET(c *gin.Context) {
-	
+
 	c.JSON(200, gin.H{
 		"message": "ok",
 	})
@@ -84,6 +88,7 @@ func roomPOST(c *gin.Context) {
 	}
 	messages.Add("inbound", 1)
 	room(roomid).Submit(post)
+	log.Printf("message received from %s", nick)
 	c.JSON(http.StatusOK, post)
 }
 
